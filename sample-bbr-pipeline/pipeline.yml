@@ -1,0 +1,106 @@
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+- name: bbr-pipeline-tasks-repo
+  type: git
+  source:
+    uri: https://github.com/pivotal-cf/bbr-pcf-pipeline-tasks.git
+    branch: master
+
+- name: start-daily
+  type: time
+  source:
+    start: 12:00 AM
+    stop: 1:00 AM  
+
+- name: bbr-release
+  type: pivnet
+  source:
+    api_token: ((pivnet-api-token))
+    product_slug: p-bosh-backup-and-restore
+
+- name: rsync-task-repo
+  type: git
+  source:
+    uri: https://github.com/Ykisialiou/concourse-playground.git 
+    branch: master 
+
+
+## Separate resources for om and bosh-cli
+#
+#- name: om-cli
+#
+#- name: bosh-cli
+jobs:
+- name: export-opsman-configs
+  serial: true
+  plan:
+  - aggregate:
+    - get: bbr-pipeline-tasks-repo
+    - get: start-daily
+      trigger: true
+    - get: rsync-task-repo
+  - task: export-om-installation
+    file: bbr-pipeline-tasks-repo/tasks/export-om-installation/task.yml
+    params:
+      SKIP_SSL_VALIDATION: ((skip-ssl-validation))
+      OPSMAN_URL: ((opsman-url))
+      OPSMAN_USERNAME: ((opsman-username))
+      OPSMAN_PASSWORD: ((opsman-password))
+
+  - task: rsync-with-backup-server
+    file: rsync-task-repo/rsync-task/task.yml
+    params:
+        DEBUG: false
+        SSH_PRIVATE_KEY: ((backup_ssh_private_key)) 
+        USER: ((backup_username))
+        SERVER: ((backup_server))
+
+#  - put: opsman-backup-artifact
+#    params:
+#      file: opsman-installation/installation.zip
+
+- name: bbr-backup-director
+  serial: true
+  plan:
+  - aggregate:
+    - get: bbr-pipeline-tasks-repo
+    - get: bbr-release
+    - get: start-daily
+      trigger: true
+
+  - task: extract-binary
+    file: bbr-pipeline-tasks-repo/tasks/extract-bbr-binary/task.yml
+  - aggregate:
+    - get: bbr-pipeline-tasks-repo
+    - get: bbr-release
+    - get: start-daily
+      trigger: true
+  - task: extract-binary
+    file: bbr-pipeline-tasks-repo/tasks/extract-bbr-binary/task.yml
+  - task: bbr-backup-ert
+    file: bbr-pipeline-tasks-repo/tasks/bbr-backup-ert/task.yml
+    params:
+      SKIP_SSL_VALIDATION: ((skip-ssl-validation))
+      OPSMAN_URL: ((opsman-url))
+      OPSMAN_USERNAME: ((opsman-username))
+      OPSMAN_PASSWORD: ((opsman-password))
+      OPSMAN_PRIVATE_KEY: ((opsman-private-key))
+    on_failure:
+      task: bbr-cleanup-ert
+      file: bbr-pipeline-tasks-repo/tasks/bbr-cleanup-ert/task.yml
+      params:
+        SKIP_SSL_VALIDATION: ((skip-ssl-validation))
+        OPSMAN_URL: ((opsman-url))
+        OPSMAN_USERNAME: ((opsman-username))
+        OPSMAN_PASSWORD: ((opsman-password))
+        OPSMAN_PRIVATE_KEY: ((opsman-private-key))
+#  - put: ert-backup-bucket
+#    params:
+#      file: ert-backup-artifact/ert-backup.tar
+
