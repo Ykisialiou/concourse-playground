@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: alpine}
+
+params:
+  DEBUG:
+  TEST_KEY:
+
+inputs:
+  - name: rsync-task-repo
+
+run:
+  path: rsync-task-repo/certtest/task.sh
