@@ -10,6 +10,9 @@ image_resource:
 inputs:
 - name: task-repo
 
+outputs:
+- name: task-repo
+
 params:
   STATE_PATH_DIR:
   STATE_FILE_NAME:
