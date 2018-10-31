@@ -1,0 +1,18 @@
+---
+platform: linux
+
+inputs:
+- name: task-repo
+
+params:
+  STATE_PATH_DIR:
+  STATE_FILE_NAME:
+run:
+  path: bash
+  args:
+  - "-c"
+  - |
+     set -eux
+     ls task-repo/${STATE_PATH_DIR}/${STATE_FILE_NAME}
+     ls task-repo/${STATE_FILE_NAME}
+
