@@ -11,7 +11,7 @@ inputs:
 - name: task-repo
 
 outputs:
-- name: task-repo
+- name: task-repo-update
 
 params:
   STATE_PATH_DIR:
@@ -22,4 +22,5 @@ run:
   - "-c"
   - |
      set -eux
-     cp task-repo/${STATE_PATH_DIR}/${STATE_FILE_NAME} task-repo/${STATE_FILE_NAME}
+     cp -r task-repo/${STATE_PATH_DIR} task-repo-update/${STATE_PATH_DIR}
+     cp task-repo/${STATE_PATH_DIR}/${STATE_FILE_NAME} task-repo-update/${STATE_FILE_NAME}
