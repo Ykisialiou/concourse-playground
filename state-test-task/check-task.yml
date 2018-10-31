@@ -8,7 +8,7 @@ image_resource:
     tag: final   
 
 inputs:
-- name: task-repo-update
+- name: task-repo-updated
 
 params:
   STATE_PATH_DIR:
@@ -19,6 +19,6 @@ run:
   - "-c"
   - |
      set -eux
-     ls task-repo/${STATE_PATH_DIR}/${STATE_FILE_NAME}
-     ls task-repo/${STATE_FILE_NAME}
+     ls task-repo-updated/${STATE_PATH_DIR}/${STATE_FILE_NAME}
+     ls task-repo-updated/${STATE_FILE_NAME}
 
