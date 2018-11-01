@@ -1,0 +1,39 @@
+resources:
+
+- name: state
+  type: git
+  source:
+    uri: https://github.com/Ykisialiou/concourse-playground.git 
+    branch: master 
+
+
+## Separate resources for om and bosh-cli
+#
+#- name: om-cli
+#
+#- name: bosh-cli
+jobs:
+- name: test-state 
+  serial: true
+  plan:
+  - aggregate:
+    - get: task-repo
+  - task: cp-state 
+    file: task-repo/state-test-task/cp-task.yml
+    params:
+      STATE_PATH_DIR: test
+      STATE_FILE_NAME: state
+    input_mapping:
+      task-git-repo: state 
+    output_mapping:
+      task-dir: state
+
+  - task: check-state
+    file: task-repo/state-test-task/check-task.yml
+    params:
+      STATE_PATH_DIR: test
+      STATE_FILE_NAME: state
+    input_mapping: 
+      task-repo-updated: state 
+    
+
