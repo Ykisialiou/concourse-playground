@@ -1,0 +1,24 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: nttdcldplatform/buildbox}
+
+inputs:
+- name: task-git-repo
+
+outputs:
+- name: task-dir
+
+params:
+  STATE_PATH_DIR: # relative directory path were state file living(nonprod or prod)
+  STATE_FILE_NAME: # state file name 
+run:
+  path: bash
+  args:
+  - "-c"
+  - |
+     set -eux
+     cp -r task-git-repo/* task-dir/
+     mv task-git-repo/${STATE_PATH_DIR}/${STATE_FILE_NAME} task-dir/${STATE_FILE_NAME}
