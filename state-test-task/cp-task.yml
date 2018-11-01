@@ -6,10 +6,10 @@ image_resource:
   source: {repository: rjain/buildbox}
 
 inputs:
-- name: task-repo
+- name: task-git-repo
 
 outputs:
-- name: task-repo-updated
+- name: task-dir
 
 params:
   STATE_PATH_DIR:
@@ -20,5 +20,5 @@ run:
   - "-c"
   - |
      set -eux
-     cp -r task-repo/${STATE_PATH_DIR} task-repo-updated/${STATE_PATH_DIR}
-     cp task-repo/${STATE_PATH_DIR}/${STATE_FILE_NAME} task-repo-updated/${STATE_FILE_NAME}
+     cp -r task-git-repo/${STATE_PATH_DIR} task-dir/${STATE_PATH_DIR}
+     cp task-git-repo/${STATE_PATH_DIR}/${STATE_FILE_NAME} task-dir/${STATE_FILE_NAME}
