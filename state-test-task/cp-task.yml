@@ -20,5 +20,5 @@ run:
   - "-c"
   - |
      set -eux
-     cp -r task-git-repo/* task-dir/*
+     cp -r task-git-repo/* task-dir/
      cp task-git-repo/${STATE_PATH_DIR}/${STATE_FILE_NAME} task-dir/${STATE_FILE_NAME}
