@@ -16,8 +16,27 @@ run:
      set -eux
      BASE_DIR=$(readlink -f `dirname $0`)
      echo $BASE_DIR
+
+     function set_up_base_dir {
+     
+     CI_REPO_NAME="tasks"
+     BOSH_DEPLOYMENT_NAME="bosh-bootloader"
+     
+     if [ -z  ${RUN_BY_CONCOURSE} ] ; then
+       BASE_DIR=$(readlink -f `dirname $0`)
+     else
+       # if run by concourse, reuse the directory, used by manual run
+       CI_BUILD_DIR=$(readlink -f `dirname $0`)
+       BASE_DIR="${CI_BUILD_DIR}/${CI_REPO_NAME}/${BOSH_DEPLOYMENT_NAME}"
+     fi
+     
+     }
+
+
      cd $BASE_DIR
      source "${BASE_DIR}/../lib/functions.sh"
      add_terraform_file "gdp-terraform/01_output_variables_openstack.tf"
      sleep 25
+
+
 
