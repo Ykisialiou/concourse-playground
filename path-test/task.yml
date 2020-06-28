@@ -31,7 +31,7 @@ run:
      fi
      
      }
-
+     set_up_base_dir
 
      cd $BASE_DIR
      source "${BASE_DIR}/../lib/functions.sh"
