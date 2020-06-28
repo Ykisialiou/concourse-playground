@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:                                                                                                                
+  type: docker-image                                                                                                           
+  source: {repository: rjain/buildbox}
+
+inputs:
+- name: tasks
+
+run:
+  path: bash
+  args:
+  - "-c"
+  - |
+     set -eux
+     BASE_DIR=$(readlink -f `dirname $0`)
+     echo $BASE_DIR
+
