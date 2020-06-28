@@ -16,4 +16,8 @@ run:
      set -eux
      BASE_DIR=$(readlink -f `dirname $0`)
      echo $BASE_DIR
+     cd $BASE_DIR
+     source "${BASE_DIR}/../lib/functions.sh"
+     add_terraform_file "gdp-terraform/01_output_variables_openstack.tf"
+     sleep 25
 
